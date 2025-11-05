@@ -10,17 +10,23 @@ public class SFXManager : MonoBehaviour
     public AudioClip playerExplosion;
     public AudioClip BgMusicGameplay;
     public AudioClip BgMusicTitleScreen;
+    public AudioClip milestone;
+
+    private int destroyed = 0;
 
     private AudioSource SFXaudioSource;
 
     private AudioSource BgMusicAudioSource;
+    private float Default;
 
     public void Awake()
     {
         SFXaudioSource = GetComponent<AudioSource>();
         //GameObject child = this.transform.Find("BgMusic").gameObject;
         BgMusicAudioSource = gameObject.transform.Find("BgMusic").gameObject.GetComponent<AudioSource>();
-
+        
+        //default is whatever the pitch is at the start
+        Default = SFXaudioSource.pitch;
 
         
         //BgMusicAudioSource.GetComponent<AudioSource>().Play();       
@@ -31,7 +37,26 @@ public class SFXManager : MonoBehaviour
     //called in the PlayerController Script
     public void PlayerShoot()
     {
+        //gets a random range
+        int rng = Random.Range(-5, 5);
+        if(rng == -5)
+        {
+            Debug.Log("a");
+        }
+        if(rng == 0)
+        {
+            Debug.Log("B");
+        }
+        if(rng == 5)
+        {
+            Debug.Log("c");
+        }
+        //sets pitch to pitch plus that randomrange;
+        SFXaudioSource.pitch = SFXaudioSource.pitch + rng;
+        //plays the audio
         SFXaudioSource.PlayOneShot(playerShoot);
+        //sets pitch back to default
+        SFXaudioSource.pitch = Default;
     }
 
     //called in the PlayerController Script
@@ -50,6 +75,13 @@ public class SFXManager : MonoBehaviour
     public void AsteroidExplosion()
     {
         SFXaudioSource.PlayOneShot(asteroidExplosion);
+        destroyed++;
+        if (destroyed >= 10)
+        {
+            Debug.Log("milestoneplayed");
+            SFXaudioSource.PlayOneShot(milestone);
+            destroyed = 0;
+        }
     }
 
     
