@@ -38,22 +38,11 @@ public class SFXManager : MonoBehaviour
     public void PlayerShoot()
     {
         //gets a random range
-        int rng = Random.Range(-5, 5);
-        if(rng == -5)
-        {
-            Debug.Log("a");
-        }
-        if(rng == 0)
-        {
-            Debug.Log("B");
-        }
-        if(rng == 5)
-        {
-            Debug.Log("c");
-        }
+        int rng = Random.Range(-6, 5);
         //sets pitch to pitch plus that randomrange;
         SFXaudioSource.pitch = SFXaudioSource.pitch + rng;
         //plays the audio
+        Debug.Log(SFXaudioSource.pitch);
         SFXaudioSource.PlayOneShot(playerShoot);
         //sets pitch back to default
         SFXaudioSource.pitch = Default;
