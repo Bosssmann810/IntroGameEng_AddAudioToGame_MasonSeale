@@ -11,24 +11,25 @@ public class SFXManager : MonoBehaviour
     public AudioClip BgMusicGameplay;
     public AudioClip BgMusicTitleScreen;
     public AudioClip milestone;
+    public AudioClip sheildsdown;
 
     private int destroyed = 0;
+    private int hits = 0;
 
     private AudioSource SFXaudioSource;
 
     private AudioSource BgMusicAudioSource;
-    private float Default;
+
+    private AudioSource nonrandomized;
 
     public void Awake()
     {
         SFXaudioSource = GetComponent<AudioSource>();
         //GameObject child = this.transform.Find("BgMusic").gameObject;
         BgMusicAudioSource = gameObject.transform.Find("BgMusic").gameObject.GetComponent<AudioSource>();
-        
-        //default is whatever the pitch is at the start
-        Default = SFXaudioSource.pitch;
+        nonrandomized = gameObject.transform.Find("norandom").gameObject.GetComponent<AudioSource>();
 
-        
+
         //BgMusicAudioSource.GetComponent<AudioSource>().Play();       
     }
 
@@ -38,37 +39,59 @@ public class SFXManager : MonoBehaviour
     public void PlayerShoot()
     {
         //gets a random range
-        int rng = Random.Range(-6, 5);
+        int rng = Random.Range(0, 4);
         //sets pitch to pitch plus that randomrange;
-        SFXaudioSource.pitch = SFXaudioSource.pitch + rng;
+        if (rng == 1)
+        {
+            SFXaudioSource.pitch = 0.9f;
+        }
+        if (rng == 2)
+        {
+            SFXaudioSource.pitch = 1f;
+        }
+        if (rng == 3)
+        {
+            SFXaudioSource.pitch = 1.1f;
+        }
+        
         //plays the audio
         Debug.Log(SFXaudioSource.pitch);
         SFXaudioSource.PlayOneShot(playerShoot);
-        //sets pitch back to default
-        SFXaudioSource.pitch = Default;
+
     }
 
     //called in the PlayerController Script
     public void PlayerDamage()
     {
-        SFXaudioSource.PlayOneShot(playerDamage);
+        hits = hits + 1;
+        Debug.Log(hits);
+        if(hits == 6)
+        {
+            nonrandomized.PlayOneShot(sheildsdown);
+
+        }
+        nonrandomized.PlayOneShot(playerDamage);
     }
 
     //called in the PlayerController Script
     public void PlayerExplosion()
     {
+        SFXaudioSource.pitch = 1f;
+        destroyed = 0;
+        hits = 0;
         SFXaudioSource.PlayOneShot(playerExplosion);
     }
 
     //called in the AsteroidDestroy script
     public void AsteroidExplosion()
     {
+        SFXaudioSource.pitch = 1f;
         SFXaudioSource.PlayOneShot(asteroidExplosion);
         destroyed++;
         if (destroyed >= 10)
         {
             Debug.Log("milestoneplayed");
-            SFXaudioSource.PlayOneShot(milestone);
+            nonrandomized.PlayOneShot(milestone);
             destroyed = 0;
         }
     }
@@ -76,6 +99,7 @@ public class SFXManager : MonoBehaviour
     
     public void BGMusicMainMenu()
     {
+
         BgMusicAudioSource.clip = BgMusicTitleScreen;
         BgMusicAudioSource.Play();
     }
